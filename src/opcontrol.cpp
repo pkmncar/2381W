@@ -1,5 +1,6 @@
 #include "main.h"
 
+//defines the ports for each motor and encoder
 #define MOTOR1 1
 #define MOTOR2 2
 #define MOTOR3 9
@@ -13,12 +14,16 @@
 
 void drive() {
 
+	//defines the ports that are associated with each wheel
 	pros::Motor left_wheels_1 (MOTOR1);
 	pros::Motor right_wheels_1 (MOTOR3, true);
 	pros::Motor left_wheels_2 (MOTOR2, true);
 	pros::Motor right_wheels_2 (MOTOR4);
+
+	//defines controller
 	pros::Controller master (CONTROLLER_MASTER);
 
+	//loop reads the joystick controlls and powers the motors accordingly
 	while (true) {
 		int power = master.get_analog(ANALOG_LEFT_Y);
 		int turn = master.get_analog(ANALOG_RIGHT_X);
@@ -32,10 +37,11 @@ void drive() {
 	}
 }
 
+//this function measures the rotations that the tracking wheels have undergone
 void encoding() {
-  pros::ADIEncoder enc1 (ENCODERLT, ENCODERLB, false);
-	pros::ADIEncoder enc2 (ENCODERRT, ENCODERRB, false);
-	pros::ADIEncoder enc3 (ENCODERCT, ENCODERCB, false);
+  pros::ADIEncoder enc1 (ENCODERLT, ENCODERLB, false); //left wheel
+	pros::ADIEncoder enc2 (ENCODERRT, ENCODERRB, false); //right wheel
+	pros::ADIEncoder enc3 (ENCODERCT, ENCODERCB, false); //back wheel
 	while (true) {
     std::cout << "Left Side Encoder Value: " << enc1.get_value();
 		std::cout << "Right Side Encoder Value: " << enc2.get_value();

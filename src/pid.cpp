@@ -26,10 +26,10 @@ class PIDImpl
         double _integral;
 };
 
-
+//This method is called below in the method "calc()"
 PID::PID( double dt, double max, double min, double Kp, double Kd, double Ki )
 {
-    pimpl = new PIDImpl(dt,max,min,Kp,Kd,Ki);
+    pimpl = new PIDImpl(dt,max,min,Kp,Kd,Ki);//calls constructor
 }
 double PID::calculate( double setpoint, double pv )
 {
@@ -45,6 +45,8 @@ PID::~PID()
  * Implementation
  */
 PIDImpl::PIDImpl( double dt, double max, double min, double Kp, double Kd, double Ki ) :
+
+    //this function initializes the private variables above
     _dt(dt),
     _max(max),
     _min(min),
@@ -96,13 +98,13 @@ PIDImpl::~PIDImpl()
 
 int calc() {
 
-    PID pid = PID(0.1, 100, -100, 0.1, 0.01, 0.5);
+    PID pid = PID(0.1, 100, -100, 0.1, 0.01, 0.5);//constructs PID object
 
-    double val = 20;
+    double val = 20; //Defines current process value
     for (int i = 0; i < 100; i++) {
-        double inc = pid.calculate(0, val);
-        printf("val:% 7.3f inc:% 7.3f\n", val, inc);
-        val += inc;
+        double inc = pid.calculate(0, val); //calculates the output
+        printf("val:% 7.3f inc:% 7.3f\n", val, inc); //prints values
+        val += inc; //updates process value
     }
 
     return 0;
