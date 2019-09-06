@@ -11,4 +11,23 @@
  * will be stopped. Re-enabling the robot will restart the task, not re-start it
  * from where it left off.
  */
-void autonomous() {}
+
+//define ports for motors and encoders
+#define MOTOR1 1
+#define MOTOR2 2
+#define MOTOR3 9
+#define MOTOR4 10
+#define ENCODERLT 1
+#define ENCODERLB 2
+#define ENCODERRT 3
+#define ENCODERRB 4
+#define ENCODERCT 5
+#define ENCODERCB 6
+/*
+  WILL NEED TO DEFINE THE PORTS FOR THE OTHER MOTORS, SENSORS, ETC.
+*/
+
+//Will be used to call functions which will run the robot
+void autonomous() {
+
+}

@@ -12,6 +12,12 @@
 #define ENCODERCT 5
 #define ENCODERCB 6
 
+/*
+
+  WILL NEED TO DEFINE THE PORTS FOR THE OTHER MOTORS, SENSORS, ETC.
+
+*/
+
 void drive() {
 
 	//defines the ports that are associated with each wheel
@@ -55,4 +61,4 @@ void opcontrol() {
 		drive();
 		encoding();
 
-  }
+}
