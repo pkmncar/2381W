@@ -26,12 +26,13 @@
 #define SPIN_TO_IN_S (WHEEL_DIAMETER_IN_S * PI / TICKS_PER_ROTATION)
 
 /* Enumerations */
-typedef enum _turnDir
+/*typedef enum _turnDir
 {
 	cw,
 	ccw,
 	ch
 } tTurnDir;
+*/
 
 /* Structures */
 typedef struct _pos
@@ -44,7 +45,7 @@ typedef struct _pos
 	int backLst;
 } sPos; // Position of the robot
 
-typedef struct _vel
+/*typedef struct _vel
 {
 	float a;
 	float y;
@@ -54,6 +55,7 @@ typedef struct _vel
 	float lstPosY;
 	float lstPosX;
 } sVel; // Velocity of the robot
+*/
 
 typedef struct _vector
 {
@@ -85,7 +87,7 @@ float getAngleOfLine(sLine line);
 float getLengthOfLine(sLine line);
 task trackPositionTask();
 task autoMotorSensorUpdateTask(); // Update motors and sensors during auto
-//void applyHarshStop();
+void applyHarshStop();
 void resetPositionFull(sPos& position, float y, float x, float a); // Reset the position to a desired value and starts tracking
 
 /* Variables */

@@ -96,8 +96,7 @@ void resetVelocity(sVel& velocity, sPos& position)
 	velocity.lstChecked = nPgmTime;
 }
 
-void vectorToPolar(sVector& vector, sPolar& polar)
-{
+void vectorToPolar(sVector& vector, sPolar& polar){
 	if (vector.x || vector.y)
 	{
 		polar.magnitude = sqrt(vector.x * vector.x + vector.y * vector.y);
@@ -107,8 +106,7 @@ void vectorToPolar(sVector& vector, sPolar& polar)
 		polar.magnitude = polar.angle = 0;
 }
 
-void polarToVector(sPolar& polar, sVector& vector)
-{
+void polarToVector(sPolar& polar, sVector& vector){
 	if (polar.magnitude)
 	{
 		vector.x = polar.magnitude * cos(polar.angle);
@@ -118,13 +116,11 @@ void polarToVector(sPolar& polar, sVector& vector)
 		vector.x = vector.y = 0;
 }
 
-float getAngleOfLine(sLine line)
-{
+float getAngleOfLine(sLine line){
 	return atan2(line.p2.x - line.p1.x, line.p2.y - line.p1.y);
 }
 
-float getLengthOfLine(sLine line)
-{
+float getLengthOfLine(sLine line){
 	float x = line.p2.x - line.p1.x;
 	float y = line.p2.y - line.p1.y;
 	return sqrt(x * x + y * y);
@@ -133,7 +129,7 @@ float getLengthOfLine(sLine line)
 
 task trackPositionTask()
 {
-	while (true)
+	while (truet)
 	{
 		updateSensorInput(trackL);
 		updateSensorInput(trackR);
@@ -182,8 +178,6 @@ void resetPositionFull(sPos& position, float y, float x, float a)
 	tStart(trackPositionTask);
 }
 
-//not needed.
-/*
 void applyHarshStop()
 {
 	sVector vel;
@@ -216,4 +210,3 @@ void applyHarshStop()
 	setDrive(0, 0);
 	updateMotors();
 }
-*/
