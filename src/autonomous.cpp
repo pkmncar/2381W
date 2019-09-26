@@ -1,5 +1,6 @@
 #include "main.h"
 #include "tracking.h"
+#include "pid.h"
 
 
 /**
@@ -156,7 +157,7 @@ float getLengthOfLine(sLine line){
 /*
 WORKS WITH THE TRACKING THING THAT WE MADE. LOOK AT THIS AND OTHER CODE FROM 5225 (ON DISCORD) AND CONVERT THIS TO PROS
 */
-void moveToTargetSimple(float y, float x, float ys, float xs, byte power, byte startPower, float maxErrX, float decelEarly, byte decelPower, float dropEarly, tStopType stopType, tMttMode mode, bool velSafety)
+void moveToTargetSimple(float y /*desired y coordinate*/, float x/*desired x coordinate*/, float ys/*current y coordinate */, float xs/*current x coordinate*/, byte power /*Power that will be sent to motors*/, byte startPower, float maxErrX, float decelEarly, byte decelPower, float dropEarly, tStopType stopType, tMttMode mode, bool velSafety)
 {
 	int velSafetyCounter = 0;
 	if (LOGS) writeDebugStreamLine("Moving to %f %f from %f %f at %d", y, x, ys, xs, power);
@@ -203,8 +204,7 @@ void moveToTargetSimple(float y, float x, float ys, float xs, byte power, byte s
 	word finalPower = power;
 
 	unsigned long timeStart = nPgmTime;
-	do
-	{
+	do {
 		currentPosVector.x = gPosition.x - x;
 		currentPosVector.y = gPosition.y - y;
 		vectorToPolar(currentPosVector, currentPosPolar);
