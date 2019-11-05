@@ -129,7 +129,7 @@ float getLengthOfLine(sLine line){
 
 task trackPositionTask()
 {
-	while (truet)
+	while (true)
 	{
 		updateSensorInput(trackL);
 		updateSensorInput(trackR);
