@@ -3,16 +3,16 @@
 //RIGHT AND LEFT BASED ON LOOKING AT THE ROBOT FROM THE BACK
 
 //defines the ports for each motor and encoder
-#define MOTOR1 1 //L1
-#define MOTOR2 2 //L2
-#define MOTOR3 9 //R1
-#define MOTOR4 10 //R2
+#define MOTOR1 2 //L1
+#define MOTOR2 3 //L2
+#define MOTOR3 13 //R1
+#define MOTOR4 12 //R2
 
 //CHANGE PORT NUMBERS LATER
-#define MOTOR5 3 //Angler
-#define MOTOR6 7 //Arm
-#define MOTOR7 5 //ScooperL
-#define MOTOR8 9 //ScooperR
+#define MOTOR5 15 //Angler
+#define MOTOR6 5 //Arm
+#define MOTOR7 6 //intakeL
+#define MOTOR8 17 //intakeR
 
 /*DO WE NEED ENCODERS???
 
@@ -30,10 +30,10 @@
 task drive() {
 
 	//defines the ports that are associated with each wheel
-	pros::Motor left_wheels_1 (MOTOR1);
-	pros::Motor right_wheels_1 (MOTOR3, true);
-	pros::Motor left_wheels_2 (MOTOR2, true);
-	pros::Motor right_wheels_2 (MOTOR4);
+	pros::Motor left_wheels_1 (MOTOR1, 0);
+	pros::Motor right_wheels_1 (MOTOR3, 1);
+	pros::Motor left_wheels_2 (MOTOR2, 1);
+	pros::Motor right_wheels_2 (MOTOR4, 0);
 
 	//defines controller
 	pros::Controller master (CONTROLLER_MASTER);
@@ -55,34 +55,34 @@ task drive() {
 }
 
 task LiftingApparatus(){
-	pros::Motor scooper_left (MOTOR7);
-	pros::Motor scooper_right (MOTOR8);
-	pros::Motor angler (MOTOR5);
-	pros::Motor arm (MOTOR6);
+	pros::Motor intake_left (MOTOR7, 0);
+	pros::Motor intake_right (MOTOR8, 1);
+	pros::Motor angler (MOTOR5, 1);
+	pros::Motor arm (MOTOR6, 0);
 
 	//defines controller
 	pros::Controller master (CONTROLLER_MASTER);
-	pros::E_CONTROLLER_DIGITAL_R1 r1 (CONTROLLER_MASTER);
-	pros::E_CONTROLLER_DIGITAL_L1 l1 (CONTROLLER_MASTER);
-	pros::E_CONTROLLER_DIGITAL_R2 aUp (CONROLLER_MASTER);
-	pros::E_CONTROLLER_DIGITAL_L2 aDown (CONROLLER_MASTER);
-	pros::E_CONTROLLER_DIGITAL_UP armUp (CONROLLER_MASTER);
-	pros::E_CONTROLLER_DIGITAL_DOWN armDown (CONROLLER_MASTER);
+	pros::Controller r1 (E_CONTROLLER_DIGITAL_R1);
+	pros::Controller l1 (E_CONTROLLER_DIGITAL_L1);
+	pros::Controller aUp (E_CONTROLLER_DIGITAL_R2);
+	pros::Controller aDown (E_CONTROLLER_DIGITAL_L2);
+	pros::Controller armUp (E_CONTROLLER_DIGITAL_UP);
+	pros::Controller armDown (E_CONTROLLER_DIGITAL_DOWN);
 
-	int scooper_power = 0; //SET SOME VALUE FOR POWER LATER
-	int angler_power = 0; //SET SOME VALUE FOR POWER LATER
-	int arm_power = 0; //SET SOME VALUE FOR POWER LATER
+	int intake_power = 20; //SET SOME VALUE FOR POWER LATER
+	int angler_power = 20; //SET SOME VALUE FOR POWER LATER
+	int arm_power = 20; //SET SOME VALUE FOR POWER LATER
 
 	while(true){
 			int lift = r1.get_digital(DIGITAL_R1);
 			int lower = l1.get_digital(DIGITAL_L1);
 			if(lift == 1 && lower == 0){
-				scooper_left.move(scooper_power);
-				scooper_right.move(scooper_power);
+				intake_left.move(intake_power);
+				intake_right.move(intake_power);
 			}
 			else if(lift == 0 && lower == 1){
-				scooper_left.move(scooper_power);
-				scooper_right.move(scooper_power);
+				intake_left.move(intake_power);
+				intake_right.move(intake_power);
 			}
 			int anglerUp = aUp.get_digital(DIGITAL_R2);
 			int anglerDown = aDown.get_digital(DIGITAL_L2);
@@ -90,7 +90,7 @@ task LiftingApparatus(){
 				angler.move(angler_power);
 			}
 			else if(anglerUp == 0 && anglerDown == 1){
-				angler.move(-angler_power);
+				angler.move(angler_power);
 			}
 			int armUp1 = armUp.get_digital(DIGITAL_UP);
 			int armDown1 = armDown.get_digital(DIGITAL_DOWN);
@@ -98,8 +98,9 @@ task LiftingApparatus(){
 				angler.move(angler_power);
 			}
 			else if(armUp1 == 0 && armDown1 == 1){
-				angler.move(-angler_power);
+				angler.move(angler_power);
 			}
+			pros::delay(20);
 		}
 }
 
