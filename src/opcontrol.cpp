@@ -5,13 +5,13 @@
 //defines the ports for each motor and encoder
 #define MOTOR1 2 //L1
 #define MOTOR2 3 //L2
-#define MOTOR3 13 //R1
-#define MOTOR4 12 //R2
+#define MOTOR3 14 //R1
+#define MOTOR4 13 //R2
 
 //CHANGE PORT NUMBERS LATER
 #define MOTOR5 15 //Angler
 #define MOTOR6 5 //Arm
-#define MOTOR7 6 //intakeL
+#define MOTOR7 8 //intakeL
 #define MOTOR8 17 //intakeR
 
 /*DO WE NEED ENCODERS???
@@ -27,7 +27,7 @@
 
 */
 
-task drive() {
+void drive() {
 
 	//defines the ports that are associated with each wheel
 	pros::Motor left_wheels_1 (MOTOR1, 0);
@@ -43,7 +43,7 @@ task drive() {
 		int powerLeft = master.get_analog(ANALOG_LEFT_Y);
 		int powerRight = master.get_analog(ANALOG_RIGHT_Y);
 		//If there is a small difference, then program will assume person wants to go straight and will set pwoer to motors as equal
-		if((powerLeft - PowerRight) >= -4 && (powerLeft - PowerRight) <= 4){ //CHANGE VALUES LATER
+		if((powerLeft - powerRight) >= -7 && (powerLeft - powerRight) <= 7){ //CHANGE VALUES LATER
 			powerLeft = powerRight;
 		}
 		left_wheels_1.move(powerLeft);
@@ -54,51 +54,55 @@ task drive() {
 	}
 }
 
-task LiftingApparatus(){
+void LiftingApparatus(){
 	pros::Motor intake_left (MOTOR7, 0);
 	pros::Motor intake_right (MOTOR8, 1);
 	pros::Motor angler (MOTOR5, 1);
-	pros::Motor arm (MOTOR6, 0);
+	pros::Motor arm (MOTOR6, 1);
 
 	//defines controller
 	pros::Controller master (CONTROLLER_MASTER);
+	/*
 	pros::Controller r1 (E_CONTROLLER_DIGITAL_R1);
 	pros::Controller l1 (E_CONTROLLER_DIGITAL_L1);
 	pros::Controller aUp (E_CONTROLLER_DIGITAL_R2);
 	pros::Controller aDown (E_CONTROLLER_DIGITAL_L2);
 	pros::Controller armUp (E_CONTROLLER_DIGITAL_UP);
 	pros::Controller armDown (E_CONTROLLER_DIGITAL_DOWN);
+	*/
+
 
 	int intake_power = 20; //SET SOME VALUE FOR POWER LATER
 	int angler_power = 20; //SET SOME VALUE FOR POWER LATER
 	int arm_power = 20; //SET SOME VALUE FOR POWER LATER
 
 	while(true){
-			int lift = r1.get_digital(DIGITAL_R1);
-			int lower = l1.get_digital(DIGITAL_L1);
-			if(lift == 1 && lower == 0){
+
+			//int lift = E_CONTROLLER_DIGITAL_R1.get_digital(DIGITAL_R1);
+			//int lower = E_CONTROLLER_DIGITAL_L1.get_digital(DIGITAL_L1);
+			if(master.get_digital(DIGITAL_R1)){
 				intake_left.move(intake_power);
 				intake_right.move(intake_power);
 			}
-			else if(lift == 0 && lower == 1){
-				intake_left.move(intake_power);
-				intake_right.move(intake_power);
+			else if(master.get_digital(DIGITAL_L1)){
+				intake_left.move(-intake_power);
+				intake_right.move(-intake_power);
 			}
-			int anglerUp = aUp.get_digital(DIGITAL_R2);
-			int anglerDown = aDown.get_digital(DIGITAL_L2);
-			if(anglerUp == 1 && anglerDown == 0){
+			//int anglerUp = E_CONTROLLER_DIGITAL_R2.get_digital(DIGITAL_R2);
+			//int anglerDown = E_CONTROLLER_DIGITAL_L2.get_digital(DIGITAL_L2);
+			if(master.get_digital(DIGITAL_R2)){
 				angler.move(angler_power);
 			}
-			else if(anglerUp == 0 && anglerDown == 1){
+			else if(master.get_digital(DIGITAL_L2)){
+				angler.move(-angler_power);
+			}
+			//int armUp1 = E_CONTROLLER_DIGITAL_UP.get_digital(DIGITAL_UP);
+			//int armDown1 = E_CONTROLLER_DIGITAL_DOWN.get_digital(DIGITAL_DOWN);
+			if(master.get_digital(DIGITAL_UP)){
 				angler.move(angler_power);
 			}
-			int armUp1 = armUp.get_digital(DIGITAL_UP);
-			int armDown1 = armDown.get_digital(DIGITAL_DOWN);
-			if(armUp1 == 1 && armDown1 == 0){
-				angler.move(angler_power);
-			}
-			else if(armUp1 == 0 && armDown1 == 1){
-				angler.move(angler_power);
+			else if(master.get_digital(DIGITAL_DOWN)){
+				angler.move(-angler_power);
 			}
 			pros::delay(20);
 		}
@@ -124,8 +128,9 @@ void encoding() {
 
 void opcontrol() {
 
-		tStart(drive);
-		tStart(LiftingApparatus);
+		//I am using tasks because I feel that using functions will not work. This is because only one function can run at a time whereas multiple tasks can run at the same time.
+		drive();
+		LiftingApparatus();
 		//encoding();
 
 }
