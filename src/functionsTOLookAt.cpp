@@ -24,6 +24,8 @@ void turnToAngleNewAlg(float a, tTurnDir turnDir, float fullRatio, byte coastPow
 		endFull = gPosition.a * (1 - fullRatio) + a * fullRatio;
 		setDrive(127, -127);
 		while (gPosition.a < endFull /*&& (velSafety? NOT_SAFETY(power, turnToAngleNewAlg) : 1 )*/)
+
+
 		{
 			if (DATALOG_TURN != -1)
 			{
@@ -80,7 +82,7 @@ void turnToAngleNewAlg(float a, tTurnDir turnDir, float fullRatio, byte coastPow
 		setDrive(-coastPower, coastPower);
 		timeStart = npgmTime;
 		while (gPosition.a > a + degToRad(stopOffsetDeg)/* && (velSafety? NOT_SAFETY(power, turnToAngleNewAlg) : 1)*/)
-		{
+	   {
 			if (DATALOG_TURN != -1)
 			{
 				tHog();
@@ -125,7 +127,7 @@ void turnToTargetNewAlg(float y, float x, tTurnDir turnDir, float fullRatio, byt
 		if (LOGS) writeDebugStreamLine("%f %f", radToDeg(target), radToDeg(endFull));
 		setDrive(127, -127);
 		while (gPosition.a < endFull /*&& (velSafety? NOT_SAFETY(power, turnToTargetNewAlg) : 1 )*/)
-		{
+    {
 			if (DATALOG_TURN != -1)
 			{
 				tHog();
@@ -140,7 +142,7 @@ void turnToTargetNewAlg(float y, float x, tTurnDir turnDir, float fullRatio, byt
 		setDrive(coastPower, -coastPower);
 		timeStart = npgmTime;
 		while (gPosition.a < nearAngle(atan2(x - gPosition.x, y - gPosition.y) + offset, target) - degToRad(stopOffsetDeg) /*&& (velSafety? NOT_SAFETY(power, turnToTargetNewAlg) : 1 )*/)
-		{
+    {
 			if (DATALOG_TURN != -1)
 			{
 				tHog();
@@ -167,7 +169,7 @@ void turnToTargetNewAlg(float y, float x, tTurnDir turnDir, float fullRatio, byt
 		if (LOGS) writeDebugStreamLine("%f %f", radToDeg(target), radToDeg(endFull));
 		setDrive(-127, 127);
 		while (gPosition.a > endFull /*&& (velSafety? NOT_SAFETY(power, turnToTargetNewAlg) : 1 )*/)
-		{
+	   {
 			if (DATALOG_TURN != -1)
 			{
 				tHog();
@@ -182,7 +184,7 @@ void turnToTargetNewAlg(float y, float x, tTurnDir turnDir, float fullRatio, byt
 		setDrive(-coastPower, coastPower);
 		timeStart = nPgmTime;
 		while (gPosition.a > nearAngle(atan2(x - gPosition.x, y - gPosition.y) + offset, target) + degToRad(stopOffsetDeg) /*&& (velSafety? NOT_SAFETY(power, turnToTargetNewAlg) : 1 )*/)
-		{
+    {
 			if (DATALOG_TURN != -1)
 			{
 				tHog();

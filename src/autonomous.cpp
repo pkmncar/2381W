@@ -34,6 +34,8 @@
   WILL NEED TO DEFINE THE PORTS FOR THE OTHER MOTORS, SENSORS, ETC.
 */
 
+
+
 //Will be used to call functions which will run the robot
 void autonomous() {
 
@@ -153,10 +155,12 @@ float getLengthOfLine(sLine line){
 	return sqrt(x * x + y * y);
 }
 
-
 /*
 WORKS WITH THE TRACKING THING THAT WE MADE. LOOK AT THIS AND OTHER CODE FROM 5225 (ON DISCORD) AND CONVERT THIS TO PROS
 */
+
+
+
 void moveToTargetSimple(float y /*desired y coordinate*/, float x/*desired x coordinate*/, float ys/*current y coordinate */, float xs/*current x coordinate*/, byte power /*Power that will be sent to motors*/, byte startPower, float maxErrX, float decelEarly, byte decelPower, float dropEarly, tStopType stopType, tMttMode mode, bool velSafety)
 {
 	int velSafetyCounter = 0;

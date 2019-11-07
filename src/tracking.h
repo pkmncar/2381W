@@ -9,6 +9,7 @@
 */
 
 
+
 // The diameter of the tracking wheels in inches
 #define WHEEL_DIAMETER_IN_LR 2.783 // 2.843
 #define WHEEL_DIAMETER_IN_S 2.783 // 2.843
@@ -24,6 +25,9 @@
 // Used internally by trackPosition
 #define SPIN_TO_IN_LR (WHEEL_DIAMETER_IN_LR * PI / TICKS_PER_ROTATION)
 #define SPIN_TO_IN_S (WHEEL_DIAMETER_IN_S * PI / TICKS_PER_ROTATION)
+
+
+
 
 /* Enumerations */
 /*typedef enum _turnDir

@@ -54,7 +54,7 @@ void drive() {
 	}
 }
 
-void LiftingApparatus(){
+void liftingApparatus(){
 	pros::Motor intake_left (MOTOR7, 0);
 	pros::Motor intake_right (MOTOR8, 1);
 	pros::Motor angler (MOTOR5, 1);
@@ -62,24 +62,13 @@ void LiftingApparatus(){
 
 	//defines controller
 	pros::Controller master (CONTROLLER_MASTER);
-	/*
-	pros::Controller r1 (E_CONTROLLER_DIGITAL_R1);
-	pros::Controller l1 (E_CONTROLLER_DIGITAL_L1);
-	pros::Controller aUp (E_CONTROLLER_DIGITAL_R2);
-	pros::Controller aDown (E_CONTROLLER_DIGITAL_L2);
-	pros::Controller armUp (E_CONTROLLER_DIGITAL_UP);
-	pros::Controller armDown (E_CONTROLLER_DIGITAL_DOWN);
-	*/
-
 
 	int intake_power = 20; //SET SOME VALUE FOR POWER LATER
 	int angler_power = 20; //SET SOME VALUE FOR POWER LATER
 	int arm_power = 20; //SET SOME VALUE FOR POWER LATER
 
 	while(true){
-
-			//int lift = E_CONTROLLER_DIGITAL_R1.get_digital(DIGITAL_R1);
-			//int lower = E_CONTROLLER_DIGITAL_L1.get_digital(DIGITAL_L1);
+			//moves intakes
 			if(master.get_digital(DIGITAL_R1)){
 				intake_left.move(intake_power);
 				intake_right.move(intake_power);
@@ -88,16 +77,16 @@ void LiftingApparatus(){
 				intake_left.move(-intake_power);
 				intake_right.move(-intake_power);
 			}
-			//int anglerUp = E_CONTROLLER_DIGITAL_R2.get_digital(DIGITAL_R2);
-			//int anglerDown = E_CONTROLLER_DIGITAL_L2.get_digital(DIGITAL_L2);
+
+			//moves angler
 			if(master.get_digital(DIGITAL_R2)){
 				angler.move(angler_power);
 			}
 			else if(master.get_digital(DIGITAL_L2)){
 				angler.move(-angler_power);
 			}
-			//int armUp1 = E_CONTROLLER_DIGITAL_UP.get_digital(DIGITAL_UP);
-			//int armDown1 = E_CONTROLLER_DIGITAL_DOWN.get_digital(DIGITAL_DOWN);
+
+			//moves arm
 			if(master.get_digital(DIGITAL_UP)){
 				angler.move(angler_power);
 			}
@@ -108,29 +97,7 @@ void LiftingApparatus(){
 		}
 }
 
-
-
-//this function measures the rotations that the tracking wheels have undergone
-/*
-void encoding() {
-  pros::ADIEncoder enc1 (ENCODERLT, ENCODERLB, false); //left wheel
-	pros::ADIEncoder enc2 (ENCODERRT, ENCODERRB, false); //right wheel
-	pros::ADIEncoder enc3 (ENCODERCT, ENCODERCB, false); //back wheel
-	while (true) {
-    std::cout << "Left Side Encoder Value: " << enc1.get_value();
-		std::cout << "Right Side Encoder Value: " << enc2.get_value();
-		std::cout << "Back Encoder Value: " << enc3.get_value();
-    pros::delay(20);
-	}
-}
-*/
-
-
 void opcontrol() {
-
-		//I am using tasks because I feel that using functions will not work. This is because only one function can run at a time whereas multiple tasks can run at the same time.
 		drive();
-		LiftingApparatus();
-		//encoding();
-
+		liftingApparatus();
 }

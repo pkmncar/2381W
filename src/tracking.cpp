@@ -5,7 +5,7 @@ WE CAN GET RID OF STUFF WE DO NOT NEED.
 */
 
 
-/* Functions */
+// Functions
 void trackPosition(int left, int right, int back, sPos& position)
 {
 
