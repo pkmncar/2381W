@@ -24,7 +24,7 @@
 
 */
 
-void drive() {
+void drive(void*) {
 	//defines the ports that are associated with each wheel
 	pros::Motor left_wheels_1(MOTOR1, 0); //L1
 	pros::Motor right_wheels_1(MOTOR3, 1); //R1
@@ -51,7 +51,7 @@ void drive() {
 	}
 }
 
-void liftingApparatus() {
+void liftingApparatus(void*) {
 	pros::Motor intake_left(MOTOR7, 0);
 	pros::Motor intake_right(MOTOR8, 1);
 	pros::Motor angler(MOTOR5, 1);
@@ -104,9 +104,7 @@ void liftingApparatus() {
 	}
 }
 
-//the code currently requires multitasking!
-
 void opcontrol() {
-	drive();
-	liftingApparatus();
+	pros::Task task1(drive, NULL, TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "Driving");
+	pros::Task task2(liftingApparatus, NULL, TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "Lifting");
 }
