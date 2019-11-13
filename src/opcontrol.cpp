@@ -109,7 +109,7 @@ void liftingApparatus(void*) {
 		}
 		else if (master.get_digital(DIGITAL_DOWN)) {
 			arm.move(-arm_power);
-			angler.move(angler_power_arm_move);
+			angler.move(-angler_power_arm_move);
 		}
 		else {
 			arm.move(0);
