@@ -11,24 +11,18 @@
 #define MOTOR7 5 //LIntake
 #define MOTOR8 14 //RIntake
 
-void expand(void*){
-	pros::Motor arm(MOTOR6, 1);
-	pros::Motor angler(MOTOR5, 1);
-	int armPosition = 0; //SET A VALUE
-	int anglerPosition = 0; //SET A VALUE
-	/*
-	We have to set the motors of the arm and angler to move automatically for a set amount of seconds (or to a set position) and then back to the original for Ayan to drive
-	*/
-	//Moves motors to let robot expand. I DON'T WANT TO BREAK THE MOTORS SO WE HAVE TO CHANGE THE VALUES LATER
-	arm.move_absolute(armPosition, 50); //change values later
-	angler.move_absolute(anglerPosition, 50); //change values later
+/*DO WE NEED ENCODERS???
 
-	//Moves motors to original position
-	arm.move_absolute(armPosition, 50); //change values later
-	angler.move_absolute(anglerPosition, 50); //change values later
+#define ENCODERLT 1
+#define ENCODERLB 2
+#define ENCODERRT 3
+#define ENCODERRB 4
+#define ENCODERCT 5
+#define ENCODERCB 6
 
-	pros::delay(20);
-}
+  WILL NEED TO DEFINE THE PORTS FOR THE OTHER MOTORS, SENSORS, ETC.
+
+*/
 
 void drive(void*) {
 	//defines the ports that are associated with each wheel
@@ -46,9 +40,8 @@ void drive(void*) {
 		int powerRight = master.get_analog(ANALOG_RIGHT_Y);
 
 		//If there is a small difference, then program will assume person wants to go straight and will set power to motors as equal
-		if ((powerLeft - powerRight) >= -7 && (powerLeft - powerRight) <= 7){
-				powerLeft = powerRight;
-		}
+		if ((powerLeft - powerRight) >= -7 && (powerLeft - powerRight) <= 7)
+			powerLeft = powerRight;
 
 		left_wheels_1.move(powerLeft);
 		left_wheels_2.move(powerLeft);
@@ -70,10 +63,6 @@ void liftingApparatus(void*) {
 	int angler_power = 100;
 	int arm_power = 100;
 
-	//As the anglers and arms move, we will have to move the other to make sure there is no contact between the two.
-	int arm_power_angler_move = 0; //define values later
-	int angler_power_arm_move = 0; //define values later
-
 	while (true) {
 		//moves intakes
 		if (master.get_digital(DIGITAL_R2)) {
@@ -92,11 +81,9 @@ void liftingApparatus(void*) {
 		//moves angler
 		if (master.get_digital(DIGITAL_R1)) {
 			angler.move(angler_power);
-			arm.move(arm_power_angler_move);
 		}
 		else if (master.get_digital(DIGITAL_L1)) {
 			angler.move(-angler_power);
-			arm.move(-arm_power_angler_move);
 		}
 		else {
 			angler.move(0);
@@ -105,11 +92,9 @@ void liftingApparatus(void*) {
 		//moves arm
 		if (master.get_digital(DIGITAL_UP)) {
 			arm.move(arm_power);
-			angler.move(angler_power_arm_move);
 		}
 		else if (master.get_digital(DIGITAL_DOWN)) {
 			arm.move(-arm_power);
-			angler.move(-angler_power_arm_move);
 		}
 		else {
 			arm.move(0);
@@ -120,7 +105,6 @@ void liftingApparatus(void*) {
 }
 
 void opcontrol() {
-	expand();
 	pros::Task task1(drive, NULL, TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "Driving");
 	pros::Task task2(liftingApparatus, NULL, TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "Lifting");
 }
