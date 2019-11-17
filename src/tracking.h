@@ -29,7 +29,7 @@
 
 
 
-/* Enumerations */
+//Enumerations
 /*typedef enum _turnDir
 {
 	cw,
@@ -59,7 +59,7 @@ typedef struct _pos
 	float lstPosY;
 	float lstPosX;
 } sVel; // Velocity of the robot
-*/
+
 
 typedef struct _vector
 {
@@ -79,26 +79,28 @@ typedef struct _line
 	sVector p1;
 	sVector p2;
 } sLine;
+*/
 
 /* Functions */
 void trackPosition(int left, int right, int back, sPos& position); // Update the position of the robot
 void resetPosition(sPos& position); // Reset the position
-void resetVelocity(sVel& velocity, sPos& position); // Reset the velocity
-void trackVelocity(sPos position, sVel& velocity); // Update the velocity of the robot
-void vectorToPolar(sVector& vector, sPolar& polar); // Convert a cartesian vector to a polar vector
-void polarToVector(sPolar& polar, sVector& vector); // Convert a polar vector to a cartesian vector
-float getAngleOfLine(sLine line);
-float getLengthOfLine(sLine line);
-task trackPositionTask();
-task autoMotorSensorUpdateTask(); // Update motors and sensors during auto
-void applyHarshStop();
-void resetPositionFull(sPos& position, float y, float x, float a); // Reset the position to a desired value and starts tracking
+//void resetVelocity(sVel& velocity, sPos& position); // Reset the velocity
+//void trackVelocity(sPos position, sVel& velocity); // Update the velocity of the robot
+//void vectorToPolar(sVector& vector, sPolar& polar); // Convert a cartesian vector to a polar vector
+//void polarToVector(sPolar& polar, sVector& vector); // Convert a polar vector to a cartesian vector
+//float getAngleOfLine(sLine line);
+//float getLengthOfLine(sLine line);
+//task trackPositionTask();
+//task autoMotorSensorUpdateTask(); // Update motors and sensors during auto
+//void applyHarshStop();
+//void resetPositionFull(sPos& position, float y, float x, float a); // Reset the position to a desired value and starts tracking
 
 /* Variables */
 unsigned long gAutoTime = 0;
 sPos gPosition;
 sVel gVelocity;
 
+/*
 //For functions in class, "FunctionsTOLookAt.cpp"
 typedef enum _stopType
 {
@@ -114,10 +116,10 @@ typedef enum _mttMode
 	mttCascading
 } tMttMode;
 
-/* Variables */
+//Variables
 sVector gTargetLast;
 
-/* Functions */
+//Functions
 void moveToTargetSimple(float y, float x, float ys, float xs, byte power, byte startPower, float maxErrX, float decelEarly, byte decelPower, float dropEarly = 0, tStopType stopType = stopSoft | stopHarsh, tMttMode mode = mttProportional, bool velSafety = false);
 void moveToTargetDisSimple(float a, float d, float ys, float xs, byte power, byte startPower, float maxErrX, float decelEarly, byte decelPower, float dropEarly = 0, tStopType stopType = stopSoft | stopHarsh, tMttMode mode = mttProportional, bool velSafety = false);
 void turnToAngleNewAlg(float a, tTurnDir turnDir, float fullRatio, byte coastPower, float stopOffsetDeg, bool mogo = false, bool harshStop = true, bool velSafety = false);
@@ -131,3 +133,4 @@ MAKE_ASYNC_ONLY_MACHINE_5(autoSimple, ;,
 10, (turnToTargetNewAlg, float, float, tTurnDir, float, byte, float, bool, bool, float, bool), ;,
 8, (sweepTurnToTarget, float, float, float, float, tTurnDir, byte, bool, bool), ;
 )
+*/

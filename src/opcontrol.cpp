@@ -14,8 +14,8 @@
 void expand(void*){
 	pros::Motor arm(MOTOR6, 1);
 	pros::Motor angler(MOTOR5, 1);
-	int armPosition = arm.get_position();
-	int anglerPosition = angler.get_position();
+	int armPosition = 0; //SET A VALUE
+	int anglerPosition = 0; //SET A VALUE
 	/*
 	We have to set the motors of the arm and angler to move automatically for a set amount of seconds (or to a set position) and then back to the original for Ayan to drive
 	*/

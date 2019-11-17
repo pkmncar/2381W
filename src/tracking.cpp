@@ -25,7 +25,6 @@ void trackPosition(int left, int right, int back, sPos& position)
 	float h; // The hypotenuse of the triangle formed by the middle of the robot on the starting position and ending position and the middle of the circle it travels around
 	float i; // Half on the angle that I've traveled
 	float h2; // The same as h but using the back instead of the side wheels
-	float a = (L - R) / (L_DISTANCE_IN + R_DISTANCE_IN); // The angle that I've traveled
 
 	if (a)
 	{
@@ -33,7 +32,6 @@ void trackPosition(int left, int right, int back, sPos& position)
 		i = a / 2.0;
 		float sinI = sin(i);
 		h = ((r + R_DISTANCE_IN) * sinI) * 2.0;
-
 		float r2 = S / a; // The radius of the circle the robot travel's around with the back of the robot
 		h2 = ((r2 + S_DISTANCE_IN) * sinI) * 2.0;
 	}
@@ -41,10 +39,8 @@ void trackPosition(int left, int right, int back, sPos& position)
 	{
 		h = R;
 		i = 0;
-
 		h2 = S;
 	}
-
 	float p = i + position.a; // The global ending angle of the robot
 	float cosP = cos(p);
 	float sinP = sin(p);
@@ -209,4 +205,165 @@ void applyHarshStop()
 	sleep(150);
 	setDrive(0, 0);
 	updateMotors();
+}
+
+//have to set position for the arm and angler too...
+void moveToTargetSimple(float y /*desired y coordinate*/, float x/*desired x coordinate*/, float ys/*current y coordinate */, float xs/*current x coordinate*/, byte power /*Power that will be sent to motors*/, byte startPower, float maxErrX, float decelEarly, byte decelPower, float dropEarly, tStopType stopType, tMttMode mode, bool velSafety)
+{
+	int velSafetyCounter = 0;
+	if (LOGS) writeDebugStreamLine("Moving to %f %f from %f %f at %d", y, x, ys, xs, power);
+
+  //WILL NEED TO MAKE A NEW OBJECT CLASS FOR THIS!
+	gTargetLast.y = y;
+	gTargetLast.x = x;
+
+	// Create the line to follow
+	sLine followLine;
+
+	// Start points
+	followLine.p1.y = ys;
+	followLine.p1.x = xs;
+
+	// End points
+	followLine.p2.y = y;
+	followLine.p2.x = x;
+
+	float lineLength = getLengthOfLine(followLine); //GETS LENGTH OF LINE
+	if (LOGS) writeDebugStreamLine("Line length: %.2f", lineLength);
+	float lineAngle = getAngleOfLine(followLine); // Get the angle of the line that we're following relative to the vertical
+
+	float pidAngle = nearAngle(lineAngle - (power < 0 ? PI : 0), gPosition.a);//??????
+	if (LOGS) writeDebugStreamLine("Line | Pid angle: %f | %f", radToDeg(lineAngle), radToDeg(pidAngle));
+
+	// Current position relative to the ending point
+	sVector currentPosVector;
+	sPolar currentPosPolar;
+
+	sCycleData cycle;
+	initCycle(cycle, 10, "moveToTarget");
+
+	float vel;
+	float _sin = sin(lineAngle);
+	float _cos = cos(lineAngle);
+
+	word last = startPower;
+	float correction = 0;
+
+	if (mode == mttSimple)
+		setDrive(power, power);
+
+	word finalPower = power;
+
+	unsigned long timeStart = nPgmTime;
+	do {
+		currentPosVector.x = gPosition.x - x;
+		currentPosVector.y = gPosition.y - y;
+		vectorToPolar(currentPosVector, currentPosPolar);
+		currentPosPolar.angle += lineAngle;
+		polarToVector(currentPosPolar, currentPosVector);
+
+		if (maxErrX)
+		{
+			float errA = gPosition.a - pidAngle;
+			float errX = currentPosVector.x + currentPosVector.y * sin(errA) / cos(errA);
+			float correctA = atan2(x - gPosition.x, y - gPosition.y);
+			if (power < 0)
+				correctA += PI;
+			correction = fabs(errX) > maxErrX ? 8.0 * (nearAngle(correctA, gPosition.a) - gPosition.a) * sgn(power) : 0;
+		}
+
+		if (mode != mttSimple)
+		{
+			switch (mode)
+			{
+			case mttProportional:
+				finalPower = round(-127.0 / 40.0 * currentPosVector.y) * sgn(power);
+				break;
+			case mttCascading:
+#if SKILLS_ROUTE == 0
+				const float kB = 2.8;
+				const float kP = 2.0;
+#else
+				float kB, kP;
+				if (nPgmTime - gAutoTime > 40000)
+				{
+					kB = 5.0;
+					kP = 3.2;
+				}
+				else
+				{
+					kB = 4.5;
+					kP = 2.5;
+				}
+#endif
+				float vTarget = 45 * (1 - exp(0.07 * (currentPosVector.y + dropEarly)));
+				finalPower = round(kB * vTarget + kP * (vTarget - vel)) * sgn(power);
+				break;
+			}
+			LIM_TO_VAL_SET(finalPower, abs(power));
+			if (finalPower * sgn(power) < 30)
+				finalPower = 30 * sgn(power);
+			word delta = finalPower - last;
+			LIM_TO_VAL_SET(delta, 5);
+			finalPower = last += delta;
+		}
+
+		switch (sgn(correction))
+		{
+		case 0:
+			setDrive(finalPower, finalPower);
+			break;
+		case 1:
+			setDrive(finalPower, finalPower * exp(-correction));
+			break;
+		case -1:
+			setDrive(finalPower * exp(correction), finalPower);
+			break;
+		}
+
+		vel = _sin * gVelocity.x + _cos * gVelocity.y;
+
+		endCycle(cycle);
+	} while (currentPosVector.y < -dropEarly - MAX((vel * ((stopType & stopSoft) ? 0.175 : 0.098)), decelEarly) && (velSafety? NOT_SAFETY(power, moveToTargetSimple) : 1 ) );
+
+	if (LOGS) writeDebugStreamLine("%f %f", currentPosVector.y, vel);
+
+	setDrive(decelPower, decelPower);
+
+	do
+	{
+		currentPosVector.x = gPosition.x - x;
+		currentPosVector.y = gPosition.y - y;
+		vectorToPolar(currentPosVector, currentPosPolar);
+		currentPosPolar.angle += lineAngle;
+		polarToVector(currentPosPolar, currentPosVector);
+
+		vel = _sin * gVelocity.x + _cos * gVelocity.y;
+
+		endCycle(cycle);
+	} while (currentPosVector.y < -dropEarly - (vel * ((stopType & stopSoft) ? 0.175 : 0.098)));
+
+	if (stopType & stopSoft)
+	{
+		setDrive(-6 * sgn(power), -6 * sgn(power));
+		do
+		{
+			currentPosVector.x = gPosition.x - x;
+			currentPosVector.y = gPosition.y - y;
+			vectorToPolar(currentPosVector, currentPosPolar);
+			currentPosPolar.angle += lineAngle;
+			polarToVector(currentPosPolar, currentPosVector);
+
+			vel = _sin * gVelocity.x + _cos * gVelocity.y;
+
+			endCycle(cycle);
+		} while (vel > 7 && currentPosVector.y < 0);
+	}
+
+	if (stopType & stopHarsh)
+		applyHarshStop();
+	else
+		setDrive(0, 0);
+
+	if (LOGS) writeDebugStreamLine("Moved to %f %f from %f %f | %f %f %f", y, x, ys, xs, gPosition.y, gPosition.x, radToDeg(gPosition.a));
 }

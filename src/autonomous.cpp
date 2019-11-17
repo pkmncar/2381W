@@ -2,8 +2,12 @@
 #include "tracking.h"
 #include "pid.h"
 
+#include <math.h>
 
-/**
+#define PI 3.14159265
+
+
+/*
  * Runs the user autonomous code. This function will be started in its own task
  * with the default priority and stack size whenever the robot is enabled via
  * the Field Management System or the VEX Competition Switch in the autonomous
@@ -16,10 +20,15 @@
  */
 
 //define ports for motors
-#define MOTOR1 1
-#define MOTOR2 2
-#define MOTOR3 9
-#define MOTOR4 10
+#define MOTOR1 2 //L1
+#define MOTOR2 3 //L2
+#define MOTOR3 11 //R1
+#define MOTOR4 12 //R2
+
+#define MOTOR5 13 //Angler
+#define MOTOR6 4 //Arm
+#define MOTOR7 5 //LIntake
+#define MOTOR8 14 //RIntake
 
 //define ports for encoders (TRACKING WHEELS)
 #define ENCODERLT 1
@@ -29,41 +38,7 @@
 #define ENCODERCT 5
 #define ENCODERCB 6
 
-
-/*
-  WILL NEED TO DEFINE THE PORTS FOR THE OTHER MOTORS, SENSORS, ETC.
-*/
-
-
-
-//Will be used to call functions which will run the robot
-void autonomous() {
-
-  pros::lcd::initialize();
-  resetPosition(gPosition);
-  tStart(trackPositionTask);
-  //Enter code start//
-  tStop(trackPositionTask);
-
-}
-
-task trackPositionTask(){
-  pros::ADIEncoder enc1 (ENCODERLT, ENCODERLB, false); //left wheel
-  pros::ADIEncoder enc2 (ENCODERRT, ENCODERRB, false); //right wheel
-  pros::ADIEncoder enc3 (ENCODERCT, ENCODERCB, false); //back wheel
-  int left = 0, right = 0, back = 0;
-	while (true)
-	{
-    left = enc1.getValue();
-		right = enc2.getValue();
-		back = enc3.getValue();
-		trackPosition(left, right, back, gPosition);
-		pros::delay(20);
-	}
-}
-
 void trackPosition(int left, int right, int back, sPos& position){
-
   float L = (left - position.leftLst) * SPIN_TO_IN_LR; // The amount the left side of the robot moved
 	float R = (right - position.rightLst) * SPIN_TO_IN_LR; // The amount the right side of the robot moved
 	float S = (back - position.backLst) * SPIN_TO_IN_S; // The amount the back side of the robot moved
@@ -76,9 +51,8 @@ void trackPosition(int left, int right, int back, sPos& position){
 	float h; // The hypotenuse of the triangle formed by the middle of the robot on the starting position and ending position and the middle of the circle it travels around
 	float i; // Half on the angle that I've traveled
 	float h2; // The same as h but using the back instead of the side wheels
-	float a = (L - R) / (L_DISTANCE_IN + R_DISTANCE_IN); // The angle that I've traveled
-	if (a)
-	{
+  float a = (L - R) / (L_DISTANCE_IN + R_DISTANCE_IN); // The angle that I've traveled
+  if (a){
 		float r = R / a; // The radius of the circle the robot travel's around with the right side of the robot
 		i = a / 2.0;
 		float sinI = sin(i);
@@ -87,8 +61,7 @@ void trackPosition(int left, int right, int back, sPos& position){
 		float r2 = S / a; // The radius of the circle the robot travel's around with the back of the robot
 		h2 = ((r2 + S_DISTANCE_IN) * sinI) * 2.0;
 	}
-	else
-	{
+	else {
 		h = R;
 		i = 0;
 
@@ -117,206 +90,162 @@ void trackPosition(int left, int right, int back, sPos& position){
   pros::lcd::clear_line(1);
   pros::lcd::clear_line(2);
   pros::lcd::clear_line(3);
+}
 
+task trackPositionTask(){
+  /*
+    WE HAVE TO DEFINE ENCODERS AND ALL HERE. ALSO HOW THE FUCK ARE WE MEASURING MOVEMENT AND ALL????
+  */
+
+  while(true){
+    //get values from encoders
+    trackPosition(left, right, back, gPosition);
+    pros::delay(20);
+  }
 }
 
 void resetPosition(sPos& position){
-	position.leftLst = position.rightLst = position.backLst = 0;
-	position.y = position.x = position.a = 0;
+  position.leftLst = 0;
+  position.rightLst = 0;
+  position.backLst = 0;
+  position.y = 0;
+  position.x = 0;
+  position.a = 0;
 }
 
-void vectorToPolar(sVector& vector, sPolar& polar){
-	if (vector.x || vector.y)
-	{
-		polar.magnitude = sqrt(vector.x * vector.x + vector.y * vector.y);
-		polar.angle = atan2(vector.y, vector.x);
-	}
-	else
-		polar.magnitude = polar.angle = 0;
+void scoopCupe(){
+  int currentArmPosition = arm.getPosition();
+  int currentAnglerPosition = angler.getPosition();
+  int armPosition = 0; //SET A VALUE
+  int anglerPosition = 0; //SET A VALUE
+  //have to set position for the arm and angler too...
+  arm.move_absolute(armPosition, 50);//change values later
+  angler.move_absolute(anglerPosition, 50);//change values later
+  intake_left.move(70);//change values later
+  intake_right.move(70);//change values later
+  pros::delay(1000);
+  intake_left.move(0);
+  intake_right.move(0);
+  arm.move_absolute(currentArmPosition, 50);//change values later
+  angler.move_absolute(currentAnglerPosition, 50);//change values later
 }
 
-void polarToVector(sPolar& polar, sVector& vector){
-	if (polar.magnitude)
-	{
-		vector.x = polar.magnitude * cos(polar.angle);
-		vector.y = polar.magnitude * sin(polar.angle);
-	}
-	else
-		vector.x = vector.y = 0;
+void placeCubeInTower(){
+  int currentArmPosition = arm.getPosition();
+  int currentAnglerPosition = angler.getPosition();
+  int armPosition = 0; //SET A VALUE
+  int anglerPosition = 0; //SET A VALUE
+
+  arm.move_absolute(armPosition, 50);//change values later
+  angler.move_absolute(anglerPosition, 50);//change values later
+  intake_left.move(100);//change values later
+  intake_right.move(100);//change values later
+  pros::delay(1000);
+  intake_left.move(0);
+  intake_right.move(0);
+  arm.move_absolute(currentArmPosition, 50);//change values later
+  angler.move_absolute(currentAnglerPosition, 50);//change values later
 }
 
-float getAngleOfLine(sLine line){
-	return atan2(line.p2.x - line.p1.x, line.p2.y - line.p1.y);
+void placeCubesInGoal(){
+  //make robot place cubes in goal zone
 }
 
-float getLengthOfLine(sLine line){
-	float x = line.p2.x - line.p1.x;
-	float y = line.p2.y - line.p1.y;
-	return sqrt(x * x + y * y);
+void moveToTarget(float xD /*desired x coordinate*/, float yD /*desired y coordinate*/, sPos& position, int scoopRequired, int placeInTowerRequired, int placeInGoalRequired /*These will all call sepaarate functions which will make the robot place stuff in goal zones, etc.*/){
+  //Make robot get appropriate angle, then make robot move to correct location, then make robot do appropriate action
+  //get angle of direction needed to reach the desired coordinates
+  float diffX = position.x - xD;
+  float diffY = position.y - yD;
+  float aD = atan2(diffY, diffX) * 180.0 / PI;
+
+  //Set the angle of the robot
+  while(aD < (position.a - 1) || aD > (position.a + 1)){ //we may need to allow for some uncertainty
+    //Determne which way to turn the robot
+    if(aD > position.a){
+      while(aD > (position.a - 10)){ //fast, coarse movement
+          left_wheels_1.move(-70);
+          left_wheels_2.move(-70);
+          right_wheels_1.move(70);
+          right_wheels_2.move(70);
+      }
+      while(aD > position.a){ //slow, finer movement
+          left_wheels_1.move(-10);
+          left_wheels_2.move(-10);
+          right_wheels_1.move(10);
+          right_wheels_2.move(10);
+      }
+    }
+    else if(aD < position.a){
+      while(aD < (position.a - 10)){ //fast, coarse movement
+          left_wheels_1.move(70);
+          left_wheels_2.move(70);
+          right_wheels_1.move(-70);
+          right_wheels_2.move(-70);
+      }
+      while(aD < position.a){ //slow, finer movement
+          left_wheels_1.move(10);
+          left_wheels_2.move(10);
+          right_wheels_1.move(-10);
+          right_wheels_2.move(-10);
+      }
+    }
+  }
+
+  //calculates distance to destination point
+  float distanceToPoint = 0.0;
+  float toSquare = diffX*diffX + diffY*diffY;
+  distanceToPoint = sqrt(toSquare);
+
+  //incorporate PID controller at a later time
+
+  while(distanceToPoint > 1){ //allowing for uncertainty of 1. We can fine tune later
+    diffX = position.x - xD;
+    diffY = position.y - yD;
+    toSquare = diffX*diffX + diffY*diffY;
+    distanceToPoint = sqrt(toSquare);
+    if(distanceToPoint > 10){ //if it is far away, robot moves quickly
+      left_wheels_1.move(70);
+      left_wheels_2.move(70);
+      right_wheels_1.move(70);
+      right_wheels_2.move(70);
+    }
+    else if(distanceToPoint < 10){ //if it is close, robot moves slowly
+      left_wheels_1.move(10);
+      left_wheels_2.move(10);
+      right_wheels_1.move(10);
+      right_wheels_2.move(10);
+    }
+  }
+
+  //checks if secondary functions need to be called
+  if(scoopRequired == 1){
+    scoopCupe();
+  }
+  if(placeInTowerRequired == 1){
+    placeCubeInTower();
+  }
+  if(placeInGoalRequired == 1){
+    placeCubesInGoal();
+  }
+  pros::delay(20);
 }
 
-/*
-WORKS WITH THE TRACKING THING THAT WE MADE. LOOK AT THIS AND OTHER CODE FROM 5225 (ON DISCORD) AND CONVERT THIS TO PROS
-*/
+//Will be used to call functions which will run the robot
+void autonomous() {}
+  pros::lcd::initialize();
+  resetPosition(gPosition);
+  pros::Task task1(trackPositionTask, NULL, TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "TrackingPosition");
 
+  //Define motors
+  pros::Motor left_wheels_1(MOTOR1, 0); //L1
+  pros::Motor right_wheels_1(MOTOR3, 1); //R1
+  pros::Motor left_wheels_2(MOTOR2, 1); //L2
+  pros::Motor right_wheels_2(MOTOR4, 0); //R2
+  pros::Motor intake_left(MOTOR7, 0);
+	pros::Motor intake_right(MOTOR8, 1);
+	pros::Motor angler(MOTOR5, 1);
+	pros::Motor arm(MOTOR6, 1);
+  //repetition of moveToTarget() functions to command the robot to move and collect items
+  moveToTarget(0.0, 0.0, gPosition, 0, 0, 0); //set the coordinates for desired x and y adn if you want the robot to scoop blocks, place them in the tower, or place them in the goal zone
 
-
-void moveToTargetSimple(float y /*desired y coordinate*/, float x/*desired x coordinate*/, float ys/*current y coordinate */, float xs/*current x coordinate*/, byte power /*Power that will be sent to motors*/, byte startPower, float maxErrX, float decelEarly, byte decelPower, float dropEarly, tStopType stopType, tMttMode mode, bool velSafety)
-{
-	int velSafetyCounter = 0;
-	if (LOGS) writeDebugStreamLine("Moving to %f %f from %f %f at %d", y, x, ys, xs, power);
-
-  //WILL NEED TO MAKE A NEW OBJECT CLASS FOR THIS!
-	gTargetLast.y = y;
-	gTargetLast.x = x;
-
-	// Create the line to follow
-	sLine followLine;
-
-	// Start points
-	followLine.p1.y = ys;
-	followLine.p1.x = xs;
-
-	// End points
-	followLine.p2.y = y;
-	followLine.p2.x = x;
-
-	float lineLength = getLengthOfLine(followLine); //GETS LENGTH OF LINE
-	if (LOGS) writeDebugStreamLine("Line length: %.2f", lineLength);
-	float lineAngle = getAngleOfLine(followLine); // Get the angle of the line that we're following relative to the vertical
-
-	float pidAngle = nearAngle(lineAngle - (power < 0 ? PI : 0), gPosition.a);//??????
-	if (LOGS) writeDebugStreamLine("Line | Pid angle: %f | %f", radToDeg(lineAngle), radToDeg(pidAngle));
-
-	// Current position relative to the ending point
-	sVector currentPosVector;
-	sPolar currentPosPolar;
-
-	sCycleData cycle;
-	initCycle(cycle, 10, "moveToTarget");
-
-	float vel;
-	float _sin = sin(lineAngle);
-	float _cos = cos(lineAngle);
-
-	word last = startPower;
-	float correction = 0;
-
-	if (mode == mttSimple)
-		setDrive(power, power);
-
-	word finalPower = power;
-
-	unsigned long timeStart = nPgmTime;
-	do {
-		currentPosVector.x = gPosition.x - x;
-		currentPosVector.y = gPosition.y - y;
-		vectorToPolar(currentPosVector, currentPosPolar);
-		currentPosPolar.angle += lineAngle;
-		polarToVector(currentPosPolar, currentPosVector);
-
-		if (maxErrX)
-		{
-			float errA = gPosition.a - pidAngle;
-			float errX = currentPosVector.x + currentPosVector.y * sin(errA) / cos(errA);
-			float correctA = atan2(x - gPosition.x, y - gPosition.y);
-			if (power < 0)
-				correctA += PI;
-			correction = fabs(errX) > maxErrX ? 8.0 * (nearAngle(correctA, gPosition.a) - gPosition.a) * sgn(power) : 0;
-		}
-
-		if (mode != mttSimple)
-		{
-			switch (mode)
-			{
-			case mttProportional:
-				finalPower = round(-127.0 / 40.0 * currentPosVector.y) * sgn(power);
-				break;
-			case mttCascading:
-#if SKILLS_ROUTE == 0
-				const float kB = 2.8;
-				const float kP = 2.0;
-#else
-				float kB, kP;
-				if (nPgmTime - gAutoTime > 40000)
-				{
-					kB = 5.0;
-					kP = 3.2;
-				}
-				else
-				{
-					kB = 4.5;
-					kP = 2.5;
-				}
-#endif
-				float vTarget = 45 * (1 - exp(0.07 * (currentPosVector.y + dropEarly)));
-				finalPower = round(kB * vTarget + kP * (vTarget - vel)) * sgn(power);
-				break;
-			}
-			LIM_TO_VAL_SET(finalPower, abs(power));
-			if (finalPower * sgn(power) < 30)
-				finalPower = 30 * sgn(power);
-			word delta = finalPower - last;
-			LIM_TO_VAL_SET(delta, 5);
-			finalPower = last += delta;
-		}
-
-		switch (sgn(correction))
-		{
-		case 0:
-			setDrive(finalPower, finalPower);
-			break;
-		case 1:
-			setDrive(finalPower, finalPower * exp(-correction));
-			break;
-		case -1:
-			setDrive(finalPower * exp(correction), finalPower);
-			break;
-		}
-
-		vel = _sin * gVelocity.x + _cos * gVelocity.y;
-
-		endCycle(cycle);
-	} while (currentPosVector.y < -dropEarly - MAX((vel * ((stopType & stopSoft) ? 0.175 : 0.098)), decelEarly) && (velSafety? NOT_SAFETY(power, moveToTargetSimple) : 1 ) );
-
-	if (LOGS) writeDebugStreamLine("%f %f", currentPosVector.y, vel);
-
-	setDrive(decelPower, decelPower);
-
-	do
-	{
-		currentPosVector.x = gPosition.x - x;
-		currentPosVector.y = gPosition.y - y;
-		vectorToPolar(currentPosVector, currentPosPolar);
-		currentPosPolar.angle += lineAngle;
-		polarToVector(currentPosPolar, currentPosVector);
-
-		vel = _sin * gVelocity.x + _cos * gVelocity.y;
-
-		endCycle(cycle);
-	} while (currentPosVector.y < -dropEarly - (vel * ((stopType & stopSoft) ? 0.175 : 0.098)));
-
-	if (stopType & stopSoft)
-	{
-		setDrive(-6 * sgn(power), -6 * sgn(power));
-		do
-		{
-			currentPosVector.x = gPosition.x - x;
-			currentPosVector.y = gPosition.y - y;
-			vectorToPolar(currentPosVector, currentPosPolar);
-			currentPosPolar.angle += lineAngle;
-			polarToVector(currentPosPolar, currentPosVector);
-
-			vel = _sin * gVelocity.x + _cos * gVelocity.y;
-
-			endCycle(cycle);
-		} while (vel > 7 && currentPosVector.y < 0);
-	}
-
-	if (stopType & stopHarsh)
-		applyHarshStop();
-	else
-		setDrive(0, 0);
-
-	if (LOGS) writeDebugStreamLine("Moved to %f %f from %f %f | %f %f %f", y, x, ys, xs, gPosition.y, gPosition.x, radToDeg(gPosition.a));
 }
