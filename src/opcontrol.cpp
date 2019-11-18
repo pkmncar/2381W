@@ -30,21 +30,18 @@ Motor angler (MOTOR5, 1);
 
 void drive(void*) {
 
+	int power = master.get_analog(ANALOG_LEFT_Y);
+	int turn = master.get_analog(ANALOG_RIGHT_X);
 	//loop reads the joystick controlls and powers the motors accordingly
-	while(true) {
-		int powerLeft = master.get_analog(ANALOG_LEFT_Y);
-		int powerRight = master.get_analog(ANALOG_RIGHT_Y);
-
-		//If there is a small difference, then program will assume person wants to go straight and will set power to motors as equal
-		if((powerLeft - powerRight) >= -7 && (powerLeft - powerRight) <= 7)
-			powerLeft = powerRight;
-
-		left_wheels_1.move(powerLeft);
-		left_wheels_2.move(powerLeft);
-		right_wheels_1.move(powerRight);
-		right_wheels_2.move(powerRight);
-		delay(20);
-	}
+	while (true) {
+			int left = power + turn;
+			int right = power - turn;
+			left_wheels_1.move(left);
+			left_wheels_2.move(left);
+			right_wheels_1.move(right);
+			right_wheels_2.move(right);
+			delay(20);
+		}
 }
 
 void intake(void*) {

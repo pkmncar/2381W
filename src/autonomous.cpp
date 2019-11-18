@@ -127,5 +127,10 @@ void autonomous() {
   left_wheels_2.move(-20);
   right_wheels_1.move(-20);
   right_wheels_2.move(-20);
+	delay(1000);
+	left_wheels_1.move(0);
+  left_wheels_2.move(0);
+  right_wheels_1.move(0);
+  right_wheels_2.move(0);
 
 }
