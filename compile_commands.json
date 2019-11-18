@@ -28,45 +28,10 @@
             "-fdiagnostics-color",
             "--std=gnu++17",
             "-o",
-            "C:/Users/shao4/AppData/Local/Temp/tmplmhba4og/pid.cpp.o",
-            "src\\pid.cpp"
-        ],
-        "directory": "C:\\Users\\shao4\\Robo3",
-        "file": "src\\pid.cpp"
-    },
-    {
-        "arguments": [
-            "clang++",
-            "-c",
-            "-target",
-            "armv7ar-none-none-eabi",
-            "-fno-ms-extensions",
-            "-fno-ms-compatibility",
-            "-fno-delayed-template-parsing",
-            "-isystemc:\\program files\\pros\\toolchain\\usr\\bin\\../lib/gcc/arm-none-eabi/7.2.1/../../../../arm-none-eabi/include/c++/7.2.1",
-            "-isystemc:\\program files\\pros\\toolchain\\usr\\bin\\../lib/gcc/arm-none-eabi/7.2.1/../../../../arm-none-eabi/include/c++/7.2.1/arm-none-eabi/thumb/v7-ar/fpv3/softfp",
-            "-isystemc:\\program files\\pros\\toolchain\\usr\\bin\\../lib/gcc/arm-none-eabi/7.2.1/../../../../arm-none-eabi/include/c++/7.2.1/backward",
-            "-isystemc:\\program files\\pros\\toolchain\\usr\\bin\\../lib/gcc/arm-none-eabi/7.2.1/include",
-            "-isystemc:\\program files\\pros\\toolchain\\usr\\bin\\../lib/gcc/arm-none-eabi/7.2.1/include-fixed",
-            "-isystemc:\\program files\\pros\\toolchain\\usr\\bin\\../lib/gcc/arm-none-eabi/7.2.1/../../../../arm-none-eabi/include",
-            "-iquote./include",
-            "-iquote./include/./",
-            "-mcpu=cortex-a9",
-            "-mfpu=neon-fp16",
-            "-mfloat-abi=softfp",
-            "-D_POSIX_THREADS",
-            "-D_UNIX98_THREAD_MUTEX_ATTRIBUTES",
-            "-Os",
-            "-funwind-tables",
-            "-ffunction-sections",
-            "-fdata-sections",
-            "-fdiagnostics-color",
-            "--std=gnu++17",
-            "-o",
-            "C:/Users/shao4/AppData/Local/Temp/tmplmhba4og/initialize.cpp.o",
+            "bin/initialize.cpp.o",
             "src\\initialize.cpp"
         ],
-        "directory": "C:\\Users\\shao4\\Robo3",
+        "directory": "C:\\Users\\David\\Documents\\2381WCode",
         "file": "src\\initialize.cpp"
     },
     {
@@ -98,11 +63,11 @@
             "-fdiagnostics-color",
             "--std=gnu++17",
             "-o",
-            "C:/Users/shao4/AppData/Local/Temp/tmplmhba4og/autonomous.cpp.o",
-            "src\\autonomous.cpp"
+            "bin/pid.cpp.o",
+            "src\\pid.cpp"
         ],
-        "directory": "C:\\Users\\shao4\\Robo3",
-        "file": "src\\autonomous.cpp"
+        "directory": "C:\\Users\\David\\Documents\\2381WCode",
+        "file": "src\\pid.cpp"
     },
     {
         "arguments": [
@@ -133,11 +98,11 @@
             "-fdiagnostics-color",
             "--std=gnu++17",
             "-o",
-            "bin/pid_example.cpp.o",
-            "src\\pid_example.cpp"
+            "bin/autonomous.cpp.o",
+            "src\\autonomous.cpp"
         ],
-        "directory": "C:\\Users\\shao4\\Robo3",
-        "file": "src\\pid_example.cpp"
+        "directory": "C:\\Users\\David\\Documents\\2381WCode",
+        "file": "src\\autonomous.cpp"
     },
     {
         "arguments": [
@@ -171,7 +136,7 @@
             "bin/opcontrol.cpp.o",
             "src\\opcontrol.cpp"
         ],
-        "directory": "C:\\Users\\shao4\\Robo3",
+        "directory": "C:\\Users\\David\\Documents\\2381WCode",
         "file": "src\\opcontrol.cpp"
     }
 ]

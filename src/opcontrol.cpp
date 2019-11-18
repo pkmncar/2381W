@@ -60,6 +60,13 @@ void intake(void*) {
 		intake_left.move(-intake_power);
 		intake_right.move(-intake_power);
 	}
+	else if(master.get_digital(DIGITAL_B)) {
+		intake_left.move(intake_power/3);
+		intake_right.move(intake_power/3);
+		while (!master.get_digital(DIGITAL_B)) {
+	    delay(20);
+	  }
+	}
 	else {
 		intake_left.move(0);
 		intake_right.move(0);
@@ -83,7 +90,7 @@ void arms(void*) {
 	else {
 		arm.move(0);
 	}
-		pros::delay(20);
+		delay(20);
 	}
 
 
@@ -122,7 +129,7 @@ void towerScore(void*) {
 
 	intake_left.move_relative(360, -100); //change values later to not damage robot!
 	intake_right.move_relative(360, -100); //change values later to not damage robot!
-	while (!((arm.get_position() < 365) && (arm.get_position() > 355))) {
+	while (!((intake_left.get_position() < 365) && (intake_left.get_position() > 355))) {
     delay(20);
   }
 
@@ -144,7 +151,7 @@ void stacker(void*) {
 
 	angler.set_zero_position(0);
 	angler.move_absolute(100, 100); //change values later to not damage robot!
-	while (!((arm.get_position() < 105) && (arm.get_position() > 95))) {
+	while (!((angler.get_position() < 105) && (angler.get_position() > 95))) {
 		delay(20);
 	}
 
@@ -152,13 +159,12 @@ void stacker(void*) {
 	left_wheels_2.move_relative(45, 50); //change values later to not damage robot!
 	right_wheels_1.move_relative(45, 50); //change values later to not damage robot!
 	right_wheels_2.move_relative(45, 50); //change values later to not damage robot!
-	while (!((arm.get_position() < 365) && (arm.get_position() > 355))) {
+	while (!((left_wheels_1.get_position() < 50) && (left_wheels_1.get_position() > 40))) {
 		delay(20);
 	}
 
 	mutex.give();
 	}
-
 
 }
 

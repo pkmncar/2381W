@@ -101,7 +101,7 @@ int calc() {
 
     PID pid = PID(0.1, 100, -100, 0.1, 0.01, 0.5);//constructs PID object
 
-    double val = value; //Defines current process value
+    double val = 0; //Defines current process value
     for (int i = 0; i < 100; i++) {
         double inc = pid.calculate(0, val); //calculates the output
         printf("val:% 7.3f inc:% 7.3f\n", val, inc); //prints values
