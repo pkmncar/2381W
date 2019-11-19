@@ -30,18 +30,18 @@ Motor angler (MOTOR5, 1);
 
 void drive(void*) {
 
-	int power = master.get_analog(ANALOG_LEFT_Y);
-	int turn = master.get_analog(ANALOG_RIGHT_X);
 	//loop reads the joystick controlls and powers the motors accordingly
 	while (true) {
-			int left = power + turn;
-			int right = power - turn;
-			left_wheels_1.move(left);
-			left_wheels_2.move(left);
-			right_wheels_1.move(right);
-			right_wheels_2.move(right);
-			delay(20);
-		}
+		int power = master.get_analog(ANALOG_LEFT_Y);
+		int turn = master.get_analog(ANALOG_RIGHT_X);
+		int left = power + turn;
+		int right = power - turn;
+		left_wheels_1.move(left);
+		left_wheels_2.move(left);
+		right_wheels_1.move(right);
+		right_wheels_2.move(right);
+		delay(20);
+	}
 }
 
 void intake(void*) {
@@ -114,53 +114,61 @@ void anglerMove(void*) {
 
 void towerScore(void*) {
 
-	if(master.get_digital(DIGITAL_A)) {
+	while(true) {
 
-	mutex.take(TIMEOUT_MAX);
+		if(master.get_digital(DIGITAL_A)) {
 
-	arm.set_zero_position(0);
-	arm.move_absolute(100, 100); //change values later to not damage robot!
-	while (!((arm.get_position() < 105) && (arm.get_position() > 95))) {
-    delay(20);
-  }
+			mutex.take(TIMEOUT_MAX);
 
-	intake_left.move_relative(360, -100); //change values later to not damage robot!
-	intake_right.move_relative(360, -100); //change values later to not damage robot!
-	while (!((intake_left.get_position() < 365) && (intake_left.get_position() > 355))) {
-    delay(20);
-  }
+			arm.set_zero_position(0);
+			arm.move_absolute(100, 100); //change values later to not damage robot!
+			while (!((arm.get_position() < 105) && (arm.get_position() > 95))) {
+		    delay(20);
+		  }
 
-	arm.move_absolute(0, -100); //change values later to not damage robot!
-	while (!((arm.get_position() < 5) && (arm.get_position() > -5))) {
-    delay(20);
-  }
+			intake_left.move_relative(360, -100); //change values later to not damage robot!
+			intake_right.move_relative(360, -100); //change values later to not damage robot!
+			while (!((intake_left.get_position() < 365) && (intake_left.get_position() > 355))) {
+		    delay(20);
+		  }
 
-	mutex.give();
+			arm.move_absolute(0, -100); //change values later to not damage robot!
+			while (!((arm.get_position() < 5) && (arm.get_position() > -5))) {
+		    delay(20);
+		  }
+
+			mutex.give();
+		}
+
 	}
 
 }
 
 void stacker(void*) {
 
-	if(master.get_digital(DIGITAL_X)) {
+	while(true) {
 
-	mutex.take(TIMEOUT_MAX);
+		if(master.get_digital(DIGITAL_X)) {
 
-	angler.set_zero_position(0);
-	angler.move_absolute(100, 100); //change values later to not damage robot!
-	while (!((angler.get_position() < 105) && (angler.get_position() > 95))) {
-		delay(20);
-	}
+			mutex.take(TIMEOUT_MAX);
 
-	left_wheels_1.move_relative(45, 50); //change values later to not damage robot!
-	left_wheels_2.move_relative(45, 50); //change values later to not damage robot!
-	right_wheels_1.move_relative(45, 50); //change values later to not damage robot!
-	right_wheels_2.move_relative(45, 50); //change values later to not damage robot!
-	while (!((left_wheels_1.get_position() < 50) && (left_wheels_1.get_position() > 40))) {
-		delay(20);
-	}
+			angler.set_zero_position(0);
+			angler.move_absolute(100, 100); //change values later to not damage robot!
+			while (!((angler.get_position() < 105) && (angler.get_position() > 95))) {
+				delay(20);
+			}
 
-	mutex.give();
+			left_wheels_1.move_relative(45, 50); //change values later to not damage robot!
+			left_wheels_2.move_relative(45, 50); //change values later to not damage robot!
+			right_wheels_1.move_relative(45, 50); //change values later to not damage robot!
+			right_wheels_2.move_relative(45, 50); //change values later to not damage robot!
+			while (!((left_wheels_1.get_position() < 50) && (left_wheels_1.get_position() > 40))) {
+				delay(20);
+			}
+
+			mutex.give();
+		}
+
 	}
 
 }
