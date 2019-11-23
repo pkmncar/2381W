@@ -18,10 +18,6 @@ void on_center_button() {
  */
 void initialize() {
 	pros::lcd::initialize();
-	pros::lcd::set_text(1, "Hello PROS User!");
-	pros::delay(1000);
-	pros::lcd::clear_line(1);
-	pros::lcd::register_btn1_cb(on_center_button);
 }
 
 /**
