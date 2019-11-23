@@ -14,7 +14,6 @@ void drive(void*) {
 
 	//loop reads the joystick controlls and powers the motors accordingly
 	while (true) {
-<<<<<<< HEAD
 		std::string d1 = std::to_string(left_wheels_1.get_position());
 		pros::lcd::set_text(0, d1);
 		std::string d2 = std::to_string(right_wheels_1.get_position());
@@ -23,8 +22,7 @@ void drive(void*) {
 		pros::lcd::set_text(2, d3);
 		std::string d4 = std::to_string(right_wheels_2.get_position());
 		pros::lcd::set_text(3, d4);
-=======
->>>>>>> d845ef1cbdd89a64f362ef02a2a46e4a73b129ad
+
 		int power = master.get_analog(ANALOG_LEFT_Y);
 		int turn = master.get_analog(ANALOG_RIGHT_X);
 		int left = power + turn;
@@ -33,11 +31,7 @@ void drive(void*) {
 		left_wheels_2.move(left);
 		right_wheels_1.move(right);
 		right_wheels_2.move(right);
-<<<<<<< HEAD
 		pros::delay(20);
-=======
-		delay(20);
->>>>>>> d845ef1cbdd89a64f362ef02a2a46e4a73b129ad
 	}
 }
 
@@ -124,70 +118,6 @@ void anglerMove(void*) {
 	}
 }
 
-<<<<<<< HEAD
-=======
-void towerScore(void*) {
-
-	while(true) {
-
-		if(master.get_digital(DIGITAL_A)) {
-
-			mutex.take(TIMEOUT_MAX);
-
-			arm.set_zero_position(0);
-			arm.move_absolute(100, 100); //change values later to not damage robot!
-			while (!((arm.get_position() < 105) && (arm.get_position() > 95))) {
-		    delay(20);
-		  }
-
-			intake_left.move_relative(360, -100); //change values later to not damage robot!
-			intake_right.move_relative(360, -100); //change values later to not damage robot!
-			while (!((intake_left.get_position() < 365) && (intake_left.get_position() > 355))) {
-		    delay(20);
-		  }
-
-			arm.move_absolute(0, -100); //change values later to not damage robot!
-			while (!((arm.get_position() < 5) && (arm.get_position() > -5))) {
-		    delay(20);
-		  }
-
-			mutex.give();
-		}
-
-	}
-
-}
-
-void stacker(void*) {
-
-	while(true) {
-
-		if(master.get_digital(DIGITAL_X)) {
-
-			mutex.take(TIMEOUT_MAX);
-
-			angler.set_zero_position(0);
-			angler.move_absolute(100, 100); //change values later to not damage robot!
-			while (!((angler.get_position() < 105) && (angler.get_position() > 95))) {
-				delay(20);
-			}
-
-			left_wheels_1.move_relative(45, 50); //change values later to not damage robot!
-			left_wheels_2.move_relative(45, 50); //change values later to not damage robot!
-			right_wheels_1.move_relative(45, 50); //change values later to not damage robot!
-			right_wheels_2.move_relative(45, 50); //change values later to not damage robot!
-			while (!((left_wheels_1.get_position() < 50) && (left_wheels_1.get_position() > 40))) {
-				delay(20);
-			}
-
-			mutex.give();
-		}
-
-	}
-
-}
-
->>>>>>> d845ef1cbdd89a64f362ef02a2a46e4a73b129ad
 void opcontrol() {
 	autonomous();
 	pros::Task task1 (drive, NULL, TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "Driving");
