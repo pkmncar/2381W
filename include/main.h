@@ -15,6 +15,17 @@
 #ifndef _PROS_MAIN_H_
 #define _PROS_MAIN_H_
 
+//defines the ports for each motor
+#define MOTOR1 2 //L1
+#define MOTOR2 3 //L2
+#define MOTOR3 11 //R1
+#define MOTOR4 12 //R2
+
+#define MOTOR5 13 //Angler
+#define MOTOR6 4 //Arm
+#define MOTOR7 5 //LIntake
+#define MOTOR8 14 //RIntake
+
 /**
  * If defined, some commonly used enums will have preprocessor macros which give
  * a shorter, more convenient naming pattern. If this isn't desired, simply
